@@ -162,5 +162,31 @@ export async function GET(request: NextRequest) {
     { artist: "Putumayo", album: "World Lounge", genre: "Lounge" },
   ];
 
-  return NextResponse.json({ music });
+  // Fetch iTunes preview URLs for each track
+  const musicWithPreviews = await Promise.all(
+    music.map(async (track) => {
+      try {
+        const searchTerm = encodeURIComponent(`${track.artist} ${track.album}`);
+        const itunesRes = await fetch(
+          `https://itunes.apple.com/search?term=${searchTerm}&limit=1&media=music`,
+          { next: { revalidate: 86400 } }
+        );
+        if (itunesRes.ok) {
+          const data = await itunesRes.json();
+          if (data.results?.length > 0) {
+            return {
+              ...track,
+              previewUrl: data.results[0].previewUrl || null,
+              artworkUrl: data.results[0].artworkUrl100 || null,
+            };
+          }
+        }
+      } catch {
+        // Fall through to return without preview
+      }
+      return { ...track, previewUrl: null, artworkUrl: null };
+    })
+  );
+
+  return NextResponse.json({ music: musicWithPreviews });
 }
