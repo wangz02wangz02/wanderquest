@@ -96,6 +96,10 @@ export default function PlaceDialog({ place, city, onClose }: PlaceDialogProps) 
                       src={photo.imageUrl}
                       alt={photo.title}
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                      onError={(e) => {
+                        const parent = (e.target as HTMLElement).closest(".aspect-square");
+                        if (parent) (parent as HTMLElement).style.display = "none";
+                      }}
                     />
                   </div>
                 )

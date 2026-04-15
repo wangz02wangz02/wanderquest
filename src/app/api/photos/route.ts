@@ -96,43 +96,85 @@ async function getPagePhoto(
   }
 }
 
-// Get multiple images from a Wikipedia page's media list
+// Get multiple images from a Wikipedia page using the MediaWiki API
+// Uses prop=images to get file names, then prop=imageinfo for proper URLs
 async function getPageMediaImages(
   title: string,
-  limit: number = 3
+  limit: number = 3,
+  excludeUrl?: string // exclude the main image to avoid duplicates
 ): Promise<string[]> {
   try {
-    const res = await fetch(
-      `https://en.wikipedia.org/api/rest_v1/page/media-list/${encodeURIComponent(title)}`,
+    // Step 1: Get list of image files on the page
+    const listRes = await fetch(
+      `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=images&imlimit=20&format=json&origin=*`,
       { next: { revalidate: 86400 } }
     );
-    if (!res.ok) return [];
-    const data = await res.json();
+    if (!listRes.ok) return [];
+    const listData = await listRes.json();
+    const pages = listData.query?.pages;
+    if (!pages) return [];
+    const page = Object.values(pages)[0] as { images?: Array<{ title: string }> };
+    const imageFiles = page?.images || [];
+
+    // Filter to likely photos (skip icons, logos, maps, svgs)
+    const goodFiles = imageFiles
+      .map((f) => f.title)
+      .filter((t) => {
+        const lower = t.toLowerCase();
+        return (
+          (lower.endsWith(".jpg") || lower.endsWith(".jpeg") || lower.endsWith(".png")) &&
+          !lower.includes("icon") &&
+          !lower.includes("logo") &&
+          !lower.includes("flag") &&
+          !lower.includes("map") &&
+          !lower.includes("symbol") &&
+          !lower.includes("commons-logo") &&
+          !lower.includes("ambox") &&
+          !lower.includes("stub") &&
+          !lower.includes("edit-lapis") &&
+          !lower.includes("question") &&
+          !lower.includes("wiki") &&
+          !lower.includes("arrow") &&
+          !lower.includes("pictogram") &&
+          !lower.includes("sign") &&
+          !lower.includes("diagram") &&
+          !lower.includes("coat_of_arms") &&
+          !lower.includes("locator") &&
+          !lower.includes("location") &&
+          !lower.includes("placeholder") &&
+          !lower.includes(".svg")
+        );
+      })
+      .slice(0, limit + 2); // get a few extra in case some fail
+
+    if (goodFiles.length === 0) return [];
+
+    // Step 2: Get actual image URLs with proper sizing
+    const fileTitles = goodFiles.join("|");
+    const infoRes = await fetch(
+      `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(fileTitles)}&prop=imageinfo&iiprop=url&iiurlwidth=800&format=json&origin=*`,
+      { next: { revalidate: 86400 } }
+    );
+    if (!infoRes.ok) return [];
+    const infoData = await infoRes.json();
+    const infoPages = infoData.query?.pages;
+    if (!infoPages) return [];
+
     const images: string[] = [];
-    for (const item of data.items || []) {
-      if (item.type === "image" && item.srcset && item.srcset.length > 0) {
-        const src = item.srcset[item.srcset.length - 1]?.src;
-        if (src && isGoodImage(src)) {
-          const lower = src.toLowerCase();
-          // Extra filtering for media-list junk
-          if (
-            lower.includes("commons-logo") ||
-            lower.includes("edit-lapis") ||
-            lower.includes("ambox") ||
-            lower.includes("question_book") ||
-            lower.includes("wiki-") ||
-            lower.includes("arrow") ||
-            lower.includes("cscr-") ||
-            lower.includes("stub")
-          ) {
-            continue;
-          }
-          let url = src.startsWith("//") ? `https:${src}` : src;
-          // Upscale thumbnails to 800px
-          url = url.replace(/\/(\d+)px-/, "/800px-");
-          images.push(url);
-          if (images.length >= limit) break;
+    for (const p of Object.values(infoPages) as Array<{ imageinfo?: Array<{ thumburl?: string; url?: string }> }>) {
+      const info = p?.imageinfo?.[0];
+      const url = info?.thumburl || info?.url;
+      if (url && isGoodImage(url)) {
+        // Skip if it's the same as the main page image
+        if (excludeUrl && url === excludeUrl) continue;
+        // Also skip if same base filename
+        if (excludeUrl) {
+          const mainFile = excludeUrl.split("/").pop();
+          const thisFile = url.split("/").pop();
+          if (mainFile && thisFile && mainFile.replace(/^\d+px-/, "") === thisFile.replace(/^\d+px-/, "")) continue;
         }
+        images.push(url);
+        if (images.length >= limit) break;
       }
     }
     return images;
@@ -260,7 +302,7 @@ export async function GET(request: NextRequest) {
     if (result?.imageUrl) {
       if (count > 1) {
         // Get additional images from the article's media list
-        const extraImages = await getPageMediaImages(result.title, count - 1);
+        const extraImages = await getPageMediaImages(result.title, count - 1, result.imageUrl);
         const photos = [
           result,
           ...extraImages.map((url) => ({

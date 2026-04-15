@@ -259,6 +259,10 @@ export default function DestinationCard({ destination, onBack }: DestinationCard
                         imageRendering: "auto",
                         filter: "saturate(0.85) contrast(1.1)",
                       }}
+                      onError={(e) => {
+                        const parent = (e.target as HTMLElement).closest(".aspect-square");
+                        if (parent) (parent as HTMLElement).style.display = "none";
+                      }}
                     />
                     {/* Pixel overlay on hover */}
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
