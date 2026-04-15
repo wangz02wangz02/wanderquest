@@ -75,6 +75,14 @@ The first page lays out 4 modules shown as 4 rectangular structures:
 - Image 6: Desktop-style portfolio with photo gallery grid, settings panels. Used as reference for how photos of destinations should be browsable.
 - Background images: Get the picture first, then convert into pixel retro style using CSS image-rendering: pixelated and grid overlays.
 
+### Background & Title Preferences (Latest)
+- **Rejected**: Pixel art landscape background — user said "this is worse than the one before"
+- **Approved**: Floating stars on a **slightly bluer** background (not pure black). Deep blue radial gradient.
+- Added pixel art elements: spaceship (top left), Earth (bottom right), moon (upper right), shooting stars
+- Home page title: "WANDERQUEST" with cyan glow
+- Home page subtitle: Something mysterious — "CHARTING THE UNKNOWN EXPANSE" (user said "exploring the expanse of the earth, something mysterious, you change it a bit")
+- All page `<main>` elements must have `relative z-10` to render above the fixed PixelBackground
+
 ## Stack
 - **Framework**: Next.js 16 (App Router)
 - **Styling**: Tailwind CSS + custom retro/pixel theme

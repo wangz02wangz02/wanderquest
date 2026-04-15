@@ -52,14 +52,14 @@ export default function Home() {
       <PixelBackground />
       <Header />
 
-      <main className="flex-1 flex flex-col items-center justify-center px-4 pt-20 pb-8">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 pt-20 pb-8 relative z-10">
         {/* Title */}
         <div className="text-center mb-12">
           <h1 className="font-pixel text-2xl sm:text-4xl text-[#00e5ff] glow-cyan mb-4">
             WANDERQUEST
           </h1>
           <p className="font-pixel text-[8px] sm:text-[10px] text-gray-400 tracking-widest">
-            YOUR RETRO TRAVEL ADVENTURE
+            CHARTING THE UNKNOWN EXPANSE
           </p>
           <div className="mt-4 flex justify-center gap-1">
             {[...Array(20)].map((_, i) => (

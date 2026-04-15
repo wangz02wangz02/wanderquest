@@ -1,146 +1,140 @@
 "use client";
 
-// Pixel art landscape background inspired by retro game overworlds
-// Floating island with trees, mountains, clouds — all rendered as CSS/SVG
+import { useEffect, useState } from "react";
+
+// Floating stars + pixel spaceship + pixel earth on a deep blue background
+
+interface Star {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  delay: number;
+  duration: number;
+  brightness: number;
+}
 
 export default function PixelBackground() {
+  const [stars, setStars] = useState<Star[]>([]);
+
+  useEffect(() => {
+    setStars(
+      Array.from({ length: 50 }, (_, i) => ({
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: Math.random() * 2.5 + 0.5,
+        delay: Math.random() * 5,
+        duration: Math.random() * 3 + 2,
+        brightness: 0.3 + Math.random() * 0.7,
+      }))
+    );
+  }, []);
+
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {/* Sky gradient */}
+      {/* Deep blue gradient background */}
       <div
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(180deg, #0b1628 0%, #132244 30%, #1a3366 60%, #0b1628 100%)",
+          background: "radial-gradient(ellipse at 50% 40%, #0d1b3e 0%, #0a1228 50%, #060d1a 100%)",
         }}
       />
 
-      {/* Stars layer — subtle, behind everything */}
-      <svg className="absolute inset-0 w-full h-full opacity-40" xmlns="http://www.w3.org/2000/svg">
-        {Array.from({ length: 60 }, (_, i) => (
-          <rect
-            key={i}
-            x={`${(i * 17 + 7) % 100}%`}
-            y={`${(i * 13 + 3) % 100}%`}
-            width="2"
-            height="2"
-            fill="white"
-            opacity={0.2 + (i % 5) * 0.15}
-          >
-            <animate
-              attributeName="opacity"
-              values={`${0.1 + (i % 3) * 0.1};${0.4 + (i % 4) * 0.1};${0.1 + (i % 3) * 0.1}`}
-              dur={`${2 + (i % 4)}s`}
-              repeatCount="indefinite"
-            />
-          </rect>
-        ))}
-      </svg>
+      {/* Floating stars */}
+      {stars.map((star) => (
+        <div
+          key={star.id}
+          className="absolute rounded-full"
+          style={{
+            left: `${star.x}%`,
+            top: `${star.y}%`,
+            width: `${star.size}px`,
+            height: `${star.size}px`,
+            backgroundColor: star.id % 7 === 0 ? "#a0d4ff" : star.id % 11 === 0 ? "#ffe4a0" : "#ffffff",
+            opacity: star.brightness,
+            animation: `float-star ${star.duration}s ease-in-out ${star.delay}s infinite`,
+          }}
+        />
+      ))}
 
-      {/* Floating clouds */}
-      <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
-        {/* Cloud 1 — large, slow */}
-        <g opacity="0.08">
-          <rect x="-60" y="15%" width="16" height="8" rx="2" fill="white">
-            <animateTransform attributeName="transform" type="translate" values="0,0;1600,0;0,0" dur="120s" repeatCount="indefinite" />
-          </rect>
-          <rect x="-52" y="14%" width="24" height="12" rx="2" fill="white">
-            <animateTransform attributeName="transform" type="translate" values="0,0;1600,0;0,0" dur="120s" repeatCount="indefinite" />
-          </rect>
-          <rect x="-40" y="15%" width="16" height="8" rx="2" fill="white">
-            <animateTransform attributeName="transform" type="translate" values="0,0;1600,0;0,0" dur="120s" repeatCount="indefinite" />
-          </rect>
-        </g>
-        {/* Cloud 2 */}
-        <g opacity="0.06">
-          <rect x="200" y="25%" width="12" height="6" rx="2" fill="white">
-            <animateTransform attributeName="transform" type="translate" values="0,0;1400,0;0,0" dur="90s" repeatCount="indefinite" />
-          </rect>
-          <rect x="206" y="24%" width="20" height="10" rx="2" fill="white">
-            <animateTransform attributeName="transform" type="translate" values="0,0;1400,0;0,0" dur="90s" repeatCount="indefinite" />
-          </rect>
-          <rect x="218" y="25%" width="12" height="6" rx="2" fill="white">
-            <animateTransform attributeName="transform" type="translate" values="0,0;1400,0;0,0" dur="90s" repeatCount="indefinite" />
-          </rect>
-        </g>
-        {/* Cloud 3 */}
-        <g opacity="0.05">
-          <rect x="600" y="10%" width="10" height="5" rx="1" fill="white">
-            <animateTransform attributeName="transform" type="translate" values="0,0;1200,0;0,0" dur="150s" repeatCount="indefinite" />
-          </rect>
-          <rect x="606" y="9%" width="16" height="8" rx="1" fill="white">
-            <animateTransform attributeName="transform" type="translate" values="0,0;1200,0;0,0" dur="150s" repeatCount="indefinite" />
-          </rect>
-        </g>
-      </svg>
+      {/* Pixel Earth — bottom right area */}
+      <div className="absolute bottom-[12%] right-[8%] opacity-[0.12]">
+        <svg width="120" height="120" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ imageRendering: "pixelated" }}>
+          {/* Ocean */}
+          <circle cx="12" cy="12" r="11" fill="#1a4a8a" />
+          {/* Continents - pixel blocks */}
+          <rect x="6" y="4" width="3" height="2" fill="#2d7a4a" rx="0.5" />
+          <rect x="10" y="3" width="4" height="3" fill="#2d7a4a" rx="0.5" />
+          <rect x="14" y="5" width="3" height="4" fill="#2d7a4a" rx="0.5" />
+          <rect x="5" y="7" width="2" height="4" fill="#2d7a4a" rx="0.5" />
+          <rect x="8" y="8" width="3" height="2" fill="#2d7a4a" rx="0.5" />
+          <rect x="7" y="13" width="2" height="3" fill="#2d7a4a" rx="0.5" />
+          <rect x="10" y="12" width="4" height="2" fill="#2d7a4a" rx="0.5" />
+          <rect x="15" y="11" width="3" height="3" fill="#2d7a4a" rx="0.5" />
+          <rect x="4" y="15" width="3" height="2" fill="#2d7a4a" rx="0.5" />
+          {/* Ice caps */}
+          <rect x="9" y="2" width="4" height="1" fill="#c8e8ff" rx="0.5" />
+          <rect x="10" y="20" width="3" height="1" fill="#c8e8ff" rx="0.5" />
+          {/* Atmosphere glow */}
+          <circle cx="12" cy="12" r="11" fill="none" stroke="#4a9aff" strokeWidth="0.5" opacity="0.4" />
+        </svg>
+      </div>
 
-      {/* Bottom landscape — pixel art mountains and trees */}
-      <svg
-        className="absolute bottom-0 left-0 w-full"
-        style={{ height: "35%" }}
-        viewBox="0 0 320 120"
-        preserveAspectRatio="none"
-        xmlns="http://www.w3.org/2000/svg"
+      {/* Pixel Spaceship — top left, slowly drifting */}
+      <div
+        className="absolute top-[18%] left-[6%] opacity-[0.10]"
+        style={{
+          animation: "float-star 8s ease-in-out infinite",
+        }}
       >
-        {/* Far mountains */}
-        <polygon points="0,120 0,70 20,55 40,65 60,45 80,60 100,50 120,62 140,40 160,55 180,48 200,58 220,42 240,56 260,50 280,60 300,52 320,65 320,120" fill="#0f1d35" />
+        <svg width="40" height="40" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style={{ imageRendering: "pixelated" }}>
+          {/* Ship body */}
+          <rect x="7" y="1" width="2" height="2" fill="#e0e0e0" />
+          <rect x="6" y="3" width="4" height="2" fill="#c0c0c0" />
+          <rect x="5" y="5" width="6" height="3" fill="#a0a0a0" />
+          <rect x="6" y="8" width="4" height="2" fill="#c0c0c0" />
+          {/* Wings */}
+          <rect x="2" y="7" width="3" height="2" fill="#8080a0" />
+          <rect x="11" y="7" width="3" height="2" fill="#8080a0" />
+          {/* Engine glow */}
+          <rect x="6" y="10" width="1" height="2" fill="#00e5ff" opacity="0.8" />
+          <rect x="9" y="10" width="1" height="2" fill="#00e5ff" opacity="0.8" />
+          <rect x="7" y="10" width="2" height="3" fill="#00aaff" opacity="0.5" />
+        </svg>
+      </div>
 
-        {/* Mid mountains */}
-        <polygon points="0,120 0,85 15,75 30,82 50,68 70,78 90,72 110,80 130,65 150,76 170,70 190,80 210,72 230,78 250,68 270,80 290,74 310,82 320,78 320,120" fill="#142640" />
+      {/* Small shooting star — top right */}
+      <div
+        className="absolute top-[10%] right-[20%] opacity-[0.06]"
+        style={{
+          width: "30px",
+          height: "2px",
+          background: "linear-gradient(90deg, transparent, #ffffff)",
+          transform: "rotate(-30deg)",
+          animation: "float-star 6s ease-in-out 2s infinite",
+        }}
+      />
 
-        {/* Near hills */}
-        <polygon points="0,120 0,95 20,90 40,92 60,88 80,94 100,86 120,92 140,88 160,94 180,86 200,92 220,88 240,94 260,86 280,92 300,88 320,92 320,120" fill="#1a3050" />
+      {/* Another small shooting star */}
+      <div
+        className="absolute top-[35%] right-[45%] opacity-[0.04]"
+        style={{
+          width: "20px",
+          height: "1px",
+          background: "linear-gradient(90deg, transparent, #a0d4ff)",
+          transform: "rotate(-25deg)",
+          animation: "float-star 7s ease-in-out 4s infinite",
+        }}
+      />
 
-        {/* Ground */}
-        <rect x="0" y="105" width="320" height="15" fill="#1e3a5c" />
-
-        {/* Pixel trees on hills */}
-        {[20, 55, 90, 130, 165, 200, 245, 280].map((x, i) => (
-          <g key={i} opacity={0.5 + (i % 3) * 0.15}>
-            {/* Tree trunk */}
-            <rect x={x + 2} y={88 - (i % 2) * 4} width="2" height="6" fill="#2d4a3a" />
-            {/* Tree crown */}
-            <rect x={x} y={82 - (i % 2) * 4} width="6" height="4" fill="#1e5a3a" />
-            <rect x={x + 1} y={80 - (i % 2) * 4} width="4" height="2" fill="#2a6e4a" />
-          </g>
-        ))}
-
-        {/* Small pixel houses/structures */}
-        <g opacity="0.4">
-          {/* House 1 */}
-          <rect x="72" y="90" width="6" height="5" fill="#3a2a1a" />
-          <polygon points="72,90 75,86 78,90" fill="#5a3a2a" />
-          <rect x="74" y="92" width="2" height="3" fill="#ffcc00" opacity="0.6" />
-
-          {/* House 2 */}
-          <rect x="182" y="88" width="5" height="4" fill="#3a2a1a" />
-          <polygon points="182,88 184.5,85 187,88" fill="#5a3a2a" />
-          <rect x="183" y="89" width="1.5" height="3" fill="#ffcc00" opacity="0.5" />
-        </g>
-
-        {/* Water/ocean hint at bottom */}
-        <rect x="0" y="112" width="320" height="8" fill="#0a1e3a" opacity="0.6" />
-        {/* Water shimmer */}
-        {[10, 45, 80, 120, 160, 200, 240, 280].map((x, i) => (
-          <rect key={`w${i}`} x={x} y={114} width="8" height="1" fill="#1a4a7a" opacity="0.3">
-            <animate
-              attributeName="opacity"
-              values="0.1;0.4;0.1"
-              dur={`${2 + (i % 3)}s`}
-              repeatCount="indefinite"
-            />
-          </rect>
-        ))}
-      </svg>
-
-      {/* Pixel globe in the center — very subtle */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03]">
-        <svg width="400" height="400" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="45" fill="none" stroke="#00e5ff" strokeWidth="0.5" />
-          <ellipse cx="50" cy="50" rx="30" ry="45" fill="none" stroke="#00e5ff" strokeWidth="0.3" />
-          <ellipse cx="50" cy="50" rx="15" ry="45" fill="none" stroke="#00e5ff" strokeWidth="0.3" />
-          <line x1="5" y1="35" x2="95" y2="35" stroke="#00e5ff" strokeWidth="0.3" />
-          <line x1="5" y1="50" x2="95" y2="50" stroke="#00e5ff" strokeWidth="0.3" />
-          <line x1="5" y1="65" x2="95" y2="65" stroke="#00e5ff" strokeWidth="0.3" />
+      {/* Tiny pixel moon — upper right */}
+      <div className="absolute top-[8%] right-[12%] opacity-[0.08]">
+        <svg width="24" height="24" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" style={{ imageRendering: "pixelated" }}>
+          <circle cx="6" cy="6" r="5" fill="#d4c896" />
+          <circle cx="4" cy="4" r="1" fill="#b8a878" />
+          <circle cx="7" cy="6" r="1.5" fill="#b8a878" />
+          <circle cx="5" cy="8" r="0.8" fill="#c4b488" />
         </svg>
       </div>
     </div>
