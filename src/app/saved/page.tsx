@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import Header from "@/components/Header";
 import PixelIcon from "@/components/PixelIcon";
+import PixelBackground from "@/components/PixelBackground";
 
 interface SavedDestination {
   id: string;
@@ -92,8 +93,9 @@ export default function SavedPage() {
   if (!isSignedIn) {
     return (
       <div className="min-h-screen flex flex-col">
+        <PixelBackground />
         <Header />
-        <main className="flex-1 flex flex-col items-center justify-center px-4">
+        <main className="flex-1 flex flex-col items-center justify-center px-4 relative z-10">
           <PixelIcon name="bookmark" size={64} color="#2a2a4a" />
           <p className="font-pixel text-[10px] text-gray-500 mt-4">
             SIGN IN TO VIEW SAVED DESTINATIONS
@@ -111,9 +113,10 @@ export default function SavedPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <PixelBackground />
       <Header />
 
-      <main className="flex-1 flex flex-col items-center px-4 pt-20 pb-8">
+      <main className="flex-1 flex flex-col items-center px-4 pt-20 pb-8 relative z-10">
         <div className="text-center mb-8">
           <h1 className="font-pixel text-lg text-[#ff6ec7] mb-3" style={{ textShadow: "0 0 10px #ff6ec7" }}>
             MY DESTINATIONS

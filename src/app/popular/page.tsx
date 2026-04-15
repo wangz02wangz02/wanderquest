@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import PixelIcon from "@/components/PixelIcon";
+import PixelBackground from "@/components/PixelBackground";
 import { destinations, popularDestinations, getDestinationBySlug } from "@/lib/destinations";
 
 export default function PopularPage() {
@@ -28,9 +29,10 @@ export default function PopularPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <PixelBackground />
       <Header />
 
-      <main className="flex-1 flex flex-col items-center px-4 pt-20 pb-8">
+      <main className="flex-1 flex flex-col items-center px-4 pt-20 pb-8 relative z-10">
         <div className="text-center mb-6">
           <h1 className="font-pixel text-lg text-[#ffcc00] glow-golden mb-3">
             {searchResults ? "SEARCH RESULTS" : "POPULAR QUESTS"}

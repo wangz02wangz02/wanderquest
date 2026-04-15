@@ -4,6 +4,7 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import DestinationCard from "@/components/DestinationCard";
 import PixelIcon from "@/components/PixelIcon";
+import PixelBackground from "@/components/PixelBackground";
 import { MOODS, getDestinationsByMood, type Destination, type MoodId } from "@/lib/destinations";
 
 const moodColors: Record<string, string> = {
@@ -49,9 +50,10 @@ export default function MoodPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <PixelBackground />
       <Header />
 
-      <main className="flex-1 flex flex-col items-center px-4 pt-20 pb-8">
+      <main className="flex-1 flex flex-col items-center px-4 pt-20 pb-8 relative z-10">
         {!destination && !analyzing && (
           <>
             <div className="text-center mb-8">

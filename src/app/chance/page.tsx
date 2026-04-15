@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import DestinationCard from "@/components/DestinationCard";
 import PixelIcon from "@/components/PixelIcon";
+import PixelBackground from "@/components/PixelBackground";
 import { getRandomDestination, type Destination } from "@/lib/destinations";
 
 type Phase = "idle" | "flipping" | "globe" | "preview" | "reveal";
@@ -143,7 +144,7 @@ function PreviewCard({
 
   useEffect(() => {
     setEntered(true);
-    fetch(`/api/photos?q=${encodeURIComponent(destination.city + " " + destination.country)}&count=1`)
+    fetch(`/api/photos?q=${encodeURIComponent(destination.funPlaces[0] || destination.city)}`)
       .then((r) => r.json())
       .then((data) => {
         if (data.photos?.[0]?.imageUrl) setImageUrl(data.photos[0].imageUrl);
@@ -303,9 +304,10 @@ export default function ChancePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <PixelBackground />
       <Header />
 
-      <main className="flex-1 flex flex-col items-center justify-center px-4 pt-20 pb-8">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 pt-20 pb-8 relative z-10">
         {phase === "idle" && (
           <div className="flex flex-col items-center gap-8">
             <h1 className="font-pixel text-lg text-[#00e5ff] glow-cyan text-center">

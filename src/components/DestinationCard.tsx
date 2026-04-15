@@ -64,7 +64,7 @@ export default function DestinationCard({ destination, onBack }: DestinationCard
       fetch(`/api/weather?lat=${destination.lat}&lon=${destination.lon}`),
       fetch(`/api/books?city=${encodeURIComponent(destination.city)}&country=${encodeURIComponent(destination.country)}`),
       fetch(`/api/music?country=${encodeURIComponent(destination.country)}`),
-      fetch(`/api/photos?q=${encodeURIComponent(destination.city + " " + destination.country + " landmark")}&count=6`),
+      fetch(`/api/photos?places=${encodeURIComponent(destination.funPlaces.join(","))}`),
     ]);
 
     if (weatherRes.ok) setWeather(await weatherRes.json());

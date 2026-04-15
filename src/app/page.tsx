@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
 import Header from "@/components/Header";
 import PixelIcon from "@/components/PixelIcon";
+import PixelBackground from "@/components/PixelBackground";
 
 const modules = [
   {
@@ -42,55 +42,14 @@ const modules = [
   },
 ];
 
-interface Star {
-  id: number;
-  x: number;
-  y: number;
-  size: number;
-  delay: number;
-  duration: number;
-}
-
-function FloatingStars() {
-  const [stars, setStars] = useState<Star[]>([]);
-
-  useEffect(() => {
-    const generated: Star[] = Array.from({ length: 40 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 3 + 1,
-      delay: Math.random() * 5,
-      duration: Math.random() * 3 + 2,
-    }));
-    setStars(generated);
-  }, []);
-
-  return (
-    <div className="fixed inset-0 pointer-events-none z-0">
-      {stars.map((star) => (
-        <div
-          key={star.id}
-          className="absolute rounded-full bg-white"
-          style={{
-            left: `${star.x}%`,
-            top: `${star.y}%`,
-            width: `${star.size}px`,
-            height: `${star.size}px`,
-            animation: `float-star ${star.duration}s ease-in-out ${star.delay}s infinite`,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
+// FloatingStars removed — replaced by PixelBackground
 
 export default function Home() {
   const { isSignedIn } = useUser();
 
   return (
     <div className="min-h-screen flex flex-col relative">
-      <FloatingStars />
+      <PixelBackground />
       <Header />
 
       <main className="flex-1 flex flex-col items-center justify-center px-4 pt-20 pb-8">

@@ -4,6 +4,7 @@ import { use } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import DestinationCard from "@/components/DestinationCard";
+import PixelBackground from "@/components/PixelBackground";
 import { getDestinationBySlug } from "@/lib/destinations";
 import PixelIcon from "@/components/PixelIcon";
 
@@ -15,8 +16,9 @@ export default function DestinationPage({ params }: { params: Promise<{ slug: st
   if (!destination) {
     return (
       <div className="min-h-screen flex flex-col">
+        <PixelBackground />
         <Header />
-        <main className="flex-1 flex flex-col items-center justify-center px-4">
+        <main className="flex-1 flex flex-col items-center justify-center px-4 relative z-10">
           <PixelIcon name="magnify" size={64} color="#2a2a4a" />
           <p className="font-pixel text-sm text-gray-500 mt-4">
             DESTINATION NOT FOUND
@@ -34,8 +36,9 @@ export default function DestinationPage({ params }: { params: Promise<{ slug: st
 
   return (
     <div className="min-h-screen flex flex-col">
+      <PixelBackground />
       <Header />
-      <main className="flex-1 flex flex-col items-center px-4 pt-20 pb-8">
+      <main className="flex-1 flex flex-col items-center px-4 pt-20 pb-8 relative z-10">
         <DestinationCard
           destination={destination}
           onBack={() => router.back()}
