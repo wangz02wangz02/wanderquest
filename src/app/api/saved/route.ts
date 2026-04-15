@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 // GET: fetch saved destinations for the logged-in user
 export async function GET() {
@@ -10,7 +10,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("saved_destinations")
     .select("*")
     .eq("user_id", userId)
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Check if already saved
-  const { data: existing } = await supabase
+  const { data: existing } = await getSupabase()
     .from("saved_destinations")
     .select("id")
     .eq("user_id", userId)
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Already saved" }, { status: 409 });
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("saved_destinations")
     .insert({
       user_id: userId,
@@ -85,7 +85,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "id is required" }, { status: 400 });
   }
 
-  const { error } = await supabase
+  const { error } = await getSupabase()
     .from("saved_destinations")
     .delete()
     .eq("id", id)
@@ -117,7 +117,7 @@ export async function PATCH(request: NextRequest) {
   if (notes !== undefined) updates.notes = notes;
   if (itinerary !== undefined) updates.itinerary = itinerary;
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("saved_destinations")
     .update(updates)
     .eq("id", id)
