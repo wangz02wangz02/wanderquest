@@ -356,51 +356,52 @@ export default function DestinationCard({ destination, onBack }: DestinationCard
                   const isPlaying = playingTrack === track.previewUrl;
                   return (
                     <div key={`${track.artist}-${track.album}`} className="flex items-center gap-3 p-2 rounded bg-[#1a1a2e]/50">
-                      {/* Artwork or play button */}
-                      <button
-                        onClick={() => track.previewUrl && handlePlayTrack(track.previewUrl)}
-                        disabled={!track.previewUrl}
-                        className={`w-10 h-10 rounded-sm flex items-center justify-center flex-shrink-0 transition-all ${
-                          track.previewUrl
-                            ? "hover:scale-105 cursor-pointer"
-                            : "opacity-50 cursor-default"
-                        } ${isPlaying ? "ring-2 ring-[#a855f7] shadow-[0_0_10px_#a855f7]" : ""}`}
-                        style={{
-                          background: track.artworkUrl ? `url(${track.artworkUrl}) center/cover` : "#a855f7/20",
-                        }}
-                      >
-                        {!track.artworkUrl && (
+                      {/* Artwork thumbnail */}
+                      <div className="relative w-10 h-10 rounded-sm flex-shrink-0 overflow-hidden bg-[#a855f7]/20 flex items-center justify-center">
+                        {track.artworkUrl ? (
+                          <img src={track.artworkUrl} alt={track.album} className="w-full h-full object-cover" />
+                        ) : (
                           <PixelIcon name="disco" size={16} color="#a855f7" />
                         )}
-                        {track.previewUrl && (
-                          <div className={`absolute inset-0 flex items-center justify-center rounded-sm ${track.artworkUrl ? "bg-black/40" : ""}`}>
-                            <span className="font-pixel text-[8px] text-white">
-                              {isPlaying ? "||" : "▶"}
-                            </span>
-                          </div>
-                        )}
-                      </button>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-gray-200 truncate">{track.album}</p>
-                        <p className="text-xs text-gray-500 truncate">{track.artist} · {track.genre}</p>
                         {isPlaying && (
-                          <div className="flex gap-0.5 mt-1">
-                            {[...Array(8)].map((_, i) => (
-                              <div
-                                key={i}
-                                className="w-1 bg-[#a855f7] rounded-sm"
-                                style={{
-                                  height: `${4 + Math.random() * 8}px`,
-                                  animation: `float-star ${0.3 + Math.random() * 0.5}s ease-in-out infinite`,
-                                }}
-                              />
-                            ))}
+                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                            <div className="flex gap-0.5">
+                              {[...Array(4)].map((_, i) => (
+                                <div
+                                  key={i}
+                                  className="w-0.5 bg-[#a855f7] rounded-sm"
+                                  style={{
+                                    height: `${4 + Math.random() * 8}px`,
+                                    animation: `float-star ${0.3 + Math.random() * 0.5}s ease-in-out infinite`,
+                                  }}
+                                />
+                              ))}
+                            </div>
                           </div>
                         )}
                       </div>
-                      {track.previewUrl && (
+                      {/* Track info */}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-200 truncate">{track.album}</p>
+                        <p className="text-xs text-gray-500 truncate">{track.artist} · {track.genre}</p>
+                      </div>
+                      {/* Play/Pause button */}
+                      {track.previewUrl ? (
+                        <button
+                          onClick={() => handlePlayTrack(track.previewUrl!)}
+                          className={`w-8 h-8 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110 active:scale-95 ${
+                            isPlaying
+                              ? "border-[#a855f7] bg-[#a855f7]/20 shadow-[0_0_10px_rgba(168,85,247,0.4)]"
+                              : "border-[#4a4a6a] hover:border-[#a855f7] bg-transparent"
+                          }`}
+                        >
+                          <span className="font-pixel text-[7px] text-[#a855f7]">
+                            {isPlaying ? "II" : "\u25B6"}
+                          </span>
+                        </button>
+                      ) : (
                         <span className="font-pixel text-[5px] text-gray-600 flex-shrink-0">
-                          30s
+                          N/A
                         </span>
                       )}
                     </div>

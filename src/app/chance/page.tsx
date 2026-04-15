@@ -112,16 +112,16 @@ function GlobeAnimation({ destination, onComplete }: { destination: Destination;
             <div className="absolute top-1/2 left-0 right-0 h-px bg-[#00e5ff]/10" />
           </div>
           <p className="absolute -bottom-8 font-pixel text-[8px] text-[#00e5ff]">
-            NAVIGATING TO {destination.city.toUpperCase()}...
+            NAVIGATING TO...
           </p>
         </div>
       )}
       {phase === "zoom" && (
         <div className="flex flex-col items-center gap-4">
           <div className="font-pixel text-lg text-[#ffcc00] glow-golden" style={{ animation: "globe-zoom 1s ease-out forwards" }}>
-            {destination.city.toUpperCase()}
+            ? ? ?
           </div>
-          <p className="font-pixel text-[8px] text-gray-400 animate-blink">LOADING DESTINATION...</p>
+          <p className="font-pixel text-[8px] text-gray-400 animate-blink">DESTINATION FOUND...</p>
         </div>
       )}
     </div>
