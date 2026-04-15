@@ -19,7 +19,7 @@ export default function PlaceDialog({ place, city, onClose }: PlaceDialogProps) 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/photos?q=${encodeURIComponent(place + " " + city)}&count=3`)
+    fetch(`/api/photos?q=${encodeURIComponent(place)}&city=${encodeURIComponent(city)}&count=4`)
       .then((r) => r.json())
       .then((data) => setPhotos(data.photos || []))
       .catch(() => {})

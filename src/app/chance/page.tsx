@@ -144,10 +144,18 @@ function PreviewCard({
 
   useEffect(() => {
     setEntered(true);
-    fetch(`/api/photos?q=${encodeURIComponent(destination.funPlaces[0] || destination.city)}`)
+    const place = destination.funPlaces[0] || destination.city;
+    fetch(`/api/photos?q=${encodeURIComponent(place)}&city=${encodeURIComponent(destination.city)}`)
       .then((r) => r.json())
-      .then((data) => {
-        if (data.photos?.[0]?.imageUrl) setImageUrl(data.photos[0].imageUrl);
+      .then(async (data) => {
+        if (data.photos?.[0]?.imageUrl) {
+          setImageUrl(data.photos[0].imageUrl);
+        } else {
+          // Fallback: try city name directly for a scenic shot
+          const fallback = await fetch(`/api/photos?q=${encodeURIComponent(destination.city)}`);
+          const fbData = await fallback.json();
+          if (fbData.photos?.[0]?.imageUrl) setImageUrl(fbData.photos[0].imageUrl);
+        }
       })
       .catch(() => {});
   }, [destination]);
